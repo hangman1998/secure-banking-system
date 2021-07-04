@@ -1,0 +1,2 @@
+port: 10800
+dbURL: objectdb:./db.odb
