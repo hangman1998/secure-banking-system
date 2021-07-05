@@ -23,6 +23,11 @@ public class Message implements java.io.Serializable{
 
     boolean showAll;
 
+    public void destroyPassword()
+    {
+        if (password != null)
+            password = "****";
+    }
 
     public static Message acceptMsgOf(long accountNum, String username, IntLevel intLevel, ConfLevel confLevel )
     {

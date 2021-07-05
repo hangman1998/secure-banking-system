@@ -678,6 +678,7 @@ public class Handler implements Runnable {
     {
         log.port = socket.getPort();
         log.ip = socket.getInetAddress().getHostAddress();
+        log.msg.destroyPassword();
         em.getTransaction().begin();
         em.persist(log.msg);
         em.persist(log);
@@ -689,6 +690,7 @@ public class Handler implements Runnable {
         log.port = socket.getPort();
         log.ip = socket.getInetAddress().getHostAddress();
         log.activeSession = session;
+        log.msg.destroyPassword();
         em.getTransaction().begin();
         em.persist(log.msg);
         em.persist(log);
@@ -791,7 +793,6 @@ public class Handler implements Runnable {
                                     break;
                                 }
                             }
-
 
                             salt = em.createQuery("select u.salt from User u where u.username = :un", byte[].class).setParameter("un", username).getSingleResult();
                             byte[] passwordHashInDB = em.createQuery("select u.passwordHash from User u where u.username = :un", byte[].class).setParameter("un", username).getSingleResult();
