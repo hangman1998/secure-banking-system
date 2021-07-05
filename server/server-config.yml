@@ -1,2 +1,5 @@
 port: 10800
 dbURL: objectdb:./db.odb
+numOfTries: 5
+# ban time is in seconds:
+banTime: 30

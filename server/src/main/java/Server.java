@@ -19,6 +19,8 @@ public class Server {
     public static class Config{
         public int port;
         public String dbURL;
+        public int numOfTries;
+        public int banTime;
     }
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 
@@ -42,7 +44,7 @@ public class Server {
             while (true) {
                 Socket socket = serverSocket.accept();
                 System.out.println("incoming TCP syn connection...");
-                new Thread(new Handler(socket,privateKey,emf.createEntityManager())).start();
+                new Thread(new Handler(socket,privateKey,emf.createEntityManager(), config.numOfTries, config.banTime)).start();
             }
 
         } catch (IOException e) {

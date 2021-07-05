@@ -119,7 +119,7 @@ public class Client {
 //        SlightlyTrusted("st"),
 //        Untrusted("ut");
 
-//        TopSecret("tp"),
+//        TopSecret("ts"),
 //        Secret("s"),
 //        Confidential("c"),
 //        Unclassified("uc");
@@ -128,6 +128,7 @@ public class Client {
 //        LONG_TERM_SAVING_ACCOUNT("lt"),
 //        CURRENT_ACCOUNT("c"),
 //        INTEREST_FREE_DEPOSIT_ACCOUNT("d");
+
         @Command
         public String accept(@Param(name = "account number") long accNum, @Param(name = "username") String username, @Param(name = "integrity level of the new owner", description =
         "`vt` for very-trusted, `t` for trusted, `st` for slightly trusted and `ut` for untrusted") String intLevel,@Param(name = "confidentiality level of the new owner", description =
@@ -147,21 +148,19 @@ public class Client {
             return (String) reader.readObject();
         }
 
-//      for now lets disable these two:
+        @Command
+        public String deposit( long toAccNum, long amount ) throws IOException, ClassNotFoundException {
+            writer.writeObject(Message.depositMsgOf(toAccNum, amount));
+            writer.flush();
+            return (String) reader.readObject();
+        }
 
-//        @Command
-//        public String deposit(long fromAccNum, long toAccNum, long amount ) throws IOException, ClassNotFoundException {
-//            writer.writeObject(Message.depositMsgOf(fromAccNum, toAccNum, amount));
-//            writer.flush();
-//            return (String) reader.readObject();
-//        }
-//
-//        @Command
-//        public String withdraw(long fromAccNum, long toAccNum, long amount ) throws IOException, ClassNotFoundException {
-//            writer.writeObject(Message.withdrawMsgOf(fromAccNum, toAccNum, amount));
-//            writer.flush();
-//            return (String) reader.readObject();
-//        }
+        @Command
+        public String withdraw(long fromAccNum, long amount ) throws IOException, ClassNotFoundException {
+            writer.writeObject(Message.withdrawMsgOf(fromAccNum, amount));
+            writer.flush();
+            return (String) reader.readObject();
+        }
 
         @Command
         public String transfer( @Param(name = "source account") long fromAccNum,@Param(name = "dest account") long toAccNum, @Param(name = "amount") long amount ) throws IOException, ClassNotFoundException {

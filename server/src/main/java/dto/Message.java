@@ -45,21 +45,19 @@ public class Message implements java.io.Serializable{
         msg.initialAmount = initialAmount;
         return msg;
     }
-    public static Message depositMsgOf(long fromAccNum, long toAccNum, long amount )
+    public static Message depositMsgOf(long toAccNum, long amount )
     {
         Message msg = new Message();
         msg.type = CommandType.DEPOSIT;
-        msg.fromAccNum = fromAccNum;
         msg.toAccNum = toAccNum;
         msg.amount = amount;
         return msg;
     }
-    public static Message withdrawMsgOf(long fromAccNum, long toAccNum, long amount )
+    public static Message withdrawMsgOf(long fromAccNum, long amount )
     {
         Message msg = new Message();
         msg.type = CommandType.WITHDRAW;
         msg.fromAccNum = fromAccNum;
-        msg.toAccNum = toAccNum;
         msg.amount = amount;
         return msg;
     }

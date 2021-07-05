@@ -1,1 +1,15 @@
 recyclebin/
+
+
+# ignoring vscode or intellij related files
+.idea/
+.settings/
+.vscode/
+__pycache__/
+*.iml
+
+# ignoring compiled .class files
+out/
+target/
+*.class
+META-INF/
