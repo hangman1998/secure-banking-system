@@ -1,11 +1,10 @@
 package dto;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 public class Log {
@@ -101,5 +100,61 @@ public class Log {
         gotProcessed = failReason == null;
         this.date = new Date();
         this.type = msg.type;
+    }
+    private static final Map<String, Integer> loginCount = new HashMap<>();
+
+    @PrePersist public void analyze()
+    {
+        if (type == CommandType.LOGIN)
+        {
+            if (gotProcessed)
+                loginCount.put(msg.username, 0);
+            else
+                loginCount.put(msg.username, 1 + loginCount.getOrDefault(msg.username,0));
+            if (loginCount.get(msg.username) > 5)
+                System.err.println("ANALYZER: this is the " + loginCount.get(msg.username) + " failed attempt of " +msg.username +" to login!");
+        }
+        if (type == CommandType.TRANSFER )
+        {
+            if (accountConfLevel.level < userAccountConfLevel.level || accountIntLevel.level > userAccountIntLevel.level)
+                if (gotProcessed)
+                    System.err.print("!!!EXCEPTION!!! ");
+            System.err.print("ANALYZER: TRANSFER: acc conf: " +accountConfLevel + " user conf: " + userAccountConfLevel +
+                    " acc int: " + accountIntLevel + " user int: " + userAccountIntLevel + " got processed: " + gotProcessed);
+            if (failReason != null)
+                System.err.print(" because: " + failReason);
+            if (accountConfLevel.level >= userAccountConfLevel.level && accountIntLevel.level <= userAccountConfLevel.level)
+                System.err.println(" ANALYZER: write access");
+            else
+                System.err.println(" ANALYZER: no write access");
+        }
+        if (type == CommandType.WITHDRAW)
+        {
+            if (accountConfLevel.level < userAccountConfLevel.level || accountIntLevel.level > userAccountIntLevel.level)
+                if (gotProcessed)
+                    System.err.print("!!!EXCEPTION!!! ");
+            System.err.print("ANALYZER: WITHDRAW: acc conf: " +accountConfLevel + " user conf: " + userAccountConfLevel +
+                    " acc int: " + accountIntLevel + " user int: " + userAccountIntLevel + " got processed: " + gotProcessed);
+            if (failReason != null)
+                System.err.print(" because: " + failReason);
+            if (accountConfLevel.level >= userAccountConfLevel.level && accountIntLevel.level <= userAccountIntLevel.level)
+                System.err.println(" ANALYZER: write access");
+            else
+                System.err.println(" ANALYZER: no write access");
+        }
+        if (type == CommandType.SHOW_ACCOUNT && !msg.isShowAll())
+        {
+            if (accountConfLevel.level > userAccountConfLevel.level || accountIntLevel.level < userAccountIntLevel.level)
+                if (gotProcessed)
+                    System.err.print("!!!EXCEPTION!!! ");
+            System.err.print("ANALYZER: SHOW_ACCOUNT: acc conf: " +accountConfLevel + " user conf: " + userAccountConfLevel +
+                    " acc int: " + accountIntLevel + " user int: " + userAccountIntLevel + " got processed: " + gotProcessed);
+            if (failReason != null)
+                System.err.print(" because: " + failReason);
+            if (accountConfLevel.level <= userAccountConfLevel.level && accountIntLevel.level >= userAccountIntLevel.level)
+                System.err.println(" ANALYZER: read access");
+            else
+                System.err.println(" ANALYZER: no read access");
+        }
     }
 }
